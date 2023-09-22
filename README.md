@@ -1,1 +1,3 @@
-# study_kotlinfunctionalprogramming
+# 코틀린 함수형 프로그래밍 과제방
+
+각 장에 맞는 폴더에 본인 이름으로 .kt 파일을 만들어 풀리퀘를 날리면 됨
