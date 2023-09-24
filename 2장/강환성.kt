@@ -43,9 +43,22 @@ fun <A, B, C> compose(f: (B)-> C, g: (A)-> B): (A)-> C= {
 fun main() {
     println("2. 코틀린으로 함수형 프로그래밍 시작하기")
     println("2.1: "+ listOf(0, 1, 2, 3, 4, 5, 6, 7).map { fib(it) })
+
     println("2.2: "+ isSorted(listOf(1, 2, 3)) { a, b -> a <= b })
     println("2.2: "+ isSorted(listOf("1", "3", "2")) { a, b -> a <= b })
+
     println("2.3: "+ curry(fun (a: Int, b: Int)= a+b)(1)(2))
+    println("2.3: "+ curry { a: Int, b: Int ->
+        a + b
+    }(1)(2))
+
     println("2.4: "+ uncurry(fun (a: Int)= fun (b: Int)= a+b)(1, 2))
+    println("2.4: "+ uncurry { a: Int-> {
+        b: Int-> a+b
+    } }(1, 2))
+
     println("2.5: "+ compose(fun (b: Int)= b+1, fun (a: Int)= a+1)(1))
+    println("2.5: "+ compose({ b: Int-> b+1 }) { a: Int->
+        a + 1
+    }(1))
 }
