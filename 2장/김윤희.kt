@@ -6,3 +6,12 @@ fun fib(i: Int): Int {
         else go(i - 1, next, current + next) + 1
     return go(i, 0, 1)
 }
+
+// 2.2
+fun <A> isSorted(aa: List<A>, order: (A, A) -> Boolean): Boolean {
+    tailrec fun go(a: A, restList: List<A>): Boolean =
+        if (restList.isEmpty()) true
+        else if (!order(a, restList.head)) false
+        else go(restList.head, restList.tail)
+    return aa.isEmpty() || go(aa.head, aa.tail)
+}
