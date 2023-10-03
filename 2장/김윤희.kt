@@ -15,3 +15,7 @@ fun <A> isSorted(aa: List<A>, order: (A, A) -> Boolean): Boolean {
         else go(restList.head, restList.tail)
     return aa.isEmpty() || go(aa.head, aa.tail)
 }
+
+// 2.3
+fun <A, B, C> curry(f: (A, B) -> C): (A) -> (B) -> C =
+    { a: A -> { b: B -> f(a, b) } }
