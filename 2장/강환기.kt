@@ -10,12 +10,16 @@ import kotlin.IllegalArgumentException
     fun fib(i: Int): Int = SOLUTION_HERE()
 */
 fun ex2n1(){
-    fun fib(i: Int): Int = when {
-        i == 1 -> 0
-        i == 2 -> 1
-        i >= 3 -> fib(i-2) + fib(i-1)
-        else -> throw IllegalArgumentException("자연수 범위의 값을 입력 하세요.")
+    fun fib(i: Int): Int {
+        if(i<1) throw IllegalArgumentException("자연수 범위의 값을 입력 하세요.")
+        tailrec fun loop(i:Int, f:Int, s:Int): Int = when (i) {
+            1 -> f
+            2 -> s
+            else -> loop(i-1, s, f+s)
+        }
+        return loop(i, 0, 1)
     }
+
     println("# 연습문제 2.1")
     print("  계산 하고자 하는 피보나치 수의 회차를 입력 하세요. :")
     println("  피보나치 수는 ${fib(Scanner(System.`in`).nextInt())} 입니다.")
@@ -42,8 +46,11 @@ val <T> List<T>.head: T
 
 fun ex2n2(){
     fun <A> isSorted(aa: List<A>, order: (A, A) -> Boolean): Boolean {
-        fun loop(a: A, aa: List<A>): Boolean =
-            aa.isEmpty() || order(a, aa.head) && loop(aa.head, aa.tail)
+        tailrec fun loop(a: A, aa: List<A>): Boolean = when {
+            aa.isEmpty()->true
+            !order(a, aa.head)->false
+            else->loop(aa.head, aa.tail)
+        }
         return aa.isEmpty() || loop(aa.head, aa.tail)
     }
 
