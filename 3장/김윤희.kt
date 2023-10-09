@@ -37,3 +37,7 @@ fun <A> init(l: List<A>): List<A> {
         is Cons -> if (l.tail == Nil) return Nil else Cons(l.head, init(l.tail))
     }
 }
+
+// 3.6
+// 즉시 결과를 돌려줄 수 없다. 리스트의 맨 끝까지 모든 원소를 순회하고, 그 후 익명 함수를 적용하면서 한 값으로 축약된다.
+// 쇼트 서킷을 제공할 수 있으면 불필요하게 스택에 프레임을 쌓을 필요 없을 가능성이 추가되는 장점이 있을 것 같다.
