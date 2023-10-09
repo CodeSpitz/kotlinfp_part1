@@ -98,3 +98,10 @@ fun <A> appendL(a1: List<A>, a2: List<A>): List<A> {
     val leftF = { y: List<A>, x: A -> Cons(x, y) }
     return foldLeft(foldLeft(a1, Nil, leftF), a2, leftF)
 }
+
+// 3.14
+fun <A> concat(lla: List<List<A>>): List<A> =
+    foldRight(lla, Nil, { x: List<A>, y: List<A> -> append(x, y) })
+
+fun <A> concat2(lla: List<List<A>>): List<A> =
+    foldLeft(lla, Nil, { y: List<A>, x: List<A> -> appendL(y, x) })
