@@ -21,3 +21,11 @@ fun <A> drop(l: List<A>, n: Int): List<A> {
         is Cons -> drop(l.tail, n - 1)
     }
 }
+
+// 3.4
+fun <A> dropWhile(l: List<A>, f: (A) -> Boolean): List<A> {
+    return when (l) {
+        is Nil -> Nil
+        is Cons -> if (f(l.head)) dropWhile(l.tail, f) else l
+    }
+}
