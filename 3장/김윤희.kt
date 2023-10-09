@@ -55,3 +55,7 @@ val trace = {
 }
 // 결과: Cons(head=1, tail=Cons(head=2, tail=Cons(head=3, tail=Nil)))
 // Cons 생성자를 대치하게 된다.
+
+// 3.8
+fun <A> length(xs: List<A>): Int =
+    foldRight(xs, 0, { _, y -> 1 + y })
