@@ -87,3 +87,14 @@ tailrec fun <A, B> foldLeftR(xs: List<A>, z: B, f: (B, A) -> B): B =
 
 fun <A, B> foldRightL(xs: List<A>, z: B, f: (A, B) -> B): B =
     foldLeft(xs, z, { B, A -> f(A, B) })
+
+// 3.13
+fun <A> append(a1: List<A>, a2: List<A>): List<A> {
+    val rightF = { x: A, y: List<A> -> Cons(x, y) }
+    return foldRight(a1, a2, rightF)
+}
+
+fun <A> appendL(a1: List<A>, a2: List<A>): List<A> {
+    val leftF = { y: List<A>, x: A -> Cons(x, y) }
+    return foldLeft(foldLeft(a1, Nil, leftF), a2, leftF)
+}
