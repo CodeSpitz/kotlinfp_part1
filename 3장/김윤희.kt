@@ -66,3 +66,13 @@ tailrec fun <A, B> foldLeft(xs: List<A>, z: B, f: (B, A) -> B): B =
         is Nil -> z
         is Cons -> foldLeft(xs.tail, f(z, xs.head), f)
     }
+
+// 3.10
+fun sumL(xs: List<Int>): Int =
+    foldLeft(xs, 0, { b, a -> b + a })
+
+fun productL(xs: List<Double>): Double =
+    foldLeft(xs, 1.0, { b, a -> b * a })
+
+fun <A> lengthL(xs: List<A>): Int =
+    foldLeft(xs, 0, { b, _ -> 1 + b })
