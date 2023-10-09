@@ -76,3 +76,7 @@ fun productL(xs: List<Double>): Double =
 
 fun <A> lengthL(xs: List<A>): Int =
     foldLeft(xs, 0, { b, _ -> 1 + b })
+
+// 3.11
+fun <A> reverse(xs: List<A>): List<A> =
+    foldLeft(xs, Nil, { y: List<A>, x: A -> Cons(x, y) })
