@@ -80,3 +80,10 @@ fun <A> lengthL(xs: List<A>): Int =
 // 3.11
 fun <A> reverse(xs: List<A>): List<A> =
     foldLeft(xs, Nil, { y: List<A>, x: A -> Cons(x, y) })
+
+// 3.12
+tailrec fun <A, B> foldLeftR(xs: List<A>, z: B, f: (B, A) -> B): B =
+    foldRight(xs, z, { A, B -> f(B, A) })
+
+fun <A, B> foldRightL(xs: List<A>, z: B, f: (A, B) -> B): B =
+    foldLeft(xs, z, { B, A -> f(A, B) })
