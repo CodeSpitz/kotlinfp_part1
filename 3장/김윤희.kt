@@ -105,3 +105,7 @@ fun <A> concat(lla: List<List<A>>): List<A> =
 
 fun <A> concat2(lla: List<List<A>>): List<A> =
     foldLeft(lla, Nil, { y: List<A>, x: List<A> -> appendL(y, x) })
+
+// 3.15
+fun increment(xs: List<Int>): List<Int> =
+    foldLeft(reverse(xs), List.empty(), { y, x -> Cons(x + 1, y) })
