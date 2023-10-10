@@ -196,3 +196,10 @@ fun maximum(tree: Tree<Int>): Int =
         is Leaf -> tree.value
         is Branch -> maxOf(maximum(tree.left), maximum(tree.right))
     }
+
+// 3.26
+fun depth(tree: Tree<Int>): Int =
+    when (tree) {
+        is Leaf -> 0
+        is Branch -> maxOf(1 + depth(tree.left), 1 + depth(tree.right))
+    }
