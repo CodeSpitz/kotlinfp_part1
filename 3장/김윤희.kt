@@ -137,3 +137,7 @@ fun <A, B> flatMap(xa: List<A>, f: (A) -> List<B>): List<B> =
         List.empty(),
         { y, x -> append(f(x), y) }
     )
+
+// 3.20
+fun <A> filter2(xa: List<A>, f: (A) -> Boolean): List<A> =
+    flatMap(xa, { x -> if (f(x)) List.of(x) else Nil })
