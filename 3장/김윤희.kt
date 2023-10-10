@@ -203,3 +203,10 @@ fun depth(tree: Tree<Int>): Int =
         is Leaf -> 0
         is Branch -> maxOf(1 + depth(tree.left), 1 + depth(tree.right))
     }
+
+// 3.27
+fun <A, B> map(tree: Tree<A>, f: (A) -> B): Tree<B> =
+    when (tree) {
+        is Leaf -> Leaf(f(tree.value))
+        is Branch -> Branch(map(tree.left, f), map(tree.right, f))
+    }
