@@ -241,8 +241,6 @@ sealed class Tree<out A> {
                 else-> Branch(Leaf(a), of(aa[0], *tail))
             }
         }
-        // 빈 리스트를 표현하기 위한 메소드
-        fun <A> empty(): List<A> = Nil
     }
 }
 data class Leaf<A>(val value: A): Tree<A>()
