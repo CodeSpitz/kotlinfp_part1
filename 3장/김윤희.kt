@@ -145,13 +145,10 @@ fun <A> filter2(xa: List<A>, f: (A) -> Boolean): List<A> =
 // 3.21
 fun add(xa: List<Int>, xb: List<Int>): List<Int> =
     when (xa) {
-        is Nil -> when (xb) {
-            is Nil -> Nil
-            is Cons -> Cons(xb.head, add(Nil, xb.tail))
-        }
-
+        is Nil -> Nil
         is Cons -> when (xb) {
-            is Nil -> Cons(xa.head, add(xa.tail, Nil))
+            is Nil -> Nil
             is Cons -> Cons(xa.head + xb.head, add(xa.tail, xb.tail))
         }
     }
+
