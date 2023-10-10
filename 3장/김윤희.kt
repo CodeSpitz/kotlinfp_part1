@@ -161,3 +161,24 @@ fun <A> zipWith(xa: List<A>, xb: List<A>, f: (A, A) -> A): List<A> =
             is Cons -> Cons(f(xa.head, xb.head), zipWith(xa.tail, xb.tail, f))
         }
     }
+
+// 3.23
+tailrec fun <A> startsWith(target: List<A>, sub: List<A>): Boolean =
+    when (target) {
+        is Nil -> sub == Nil
+        is Cons -> when (sub) {
+            is Nil -> true
+            is Cons ->
+                if (target.head == sub.head) startsWith(target.tail, sub.tail)
+                else false
+        }
+    }
+
+tailrec fun <A> hasSubsequence(xs: List<A>, sub: List<A>): Boolean =
+    when (xs) {
+        is Nil -> false
+        is Cons -> {
+            if (startsWith(xs, sub)) true
+            else hasSubsequence(xs.tail, sub)
+        }
+    }
