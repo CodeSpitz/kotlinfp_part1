@@ -121,3 +121,12 @@ fun <A, B> map(xs: List<A>, f: (A) -> B): List<B> =
         List.empty(),
         { y, x -> Cons(f(x), y) }
     )
+
+// 3.18
+fun <A> filter(xs: List<A>, f: (A) -> Boolean): List<A> =
+    foldLeft(
+        reverse(xs),
+        Nil,
+        { y: List<A>, x: A -> if (f(x)) Cons(x, y) else filter(y, f) }
+    )
+
