@@ -109,3 +109,7 @@ fun <A> concat2(lla: List<List<A>>): List<A> =
 // 3.15
 fun increment(xs: List<Int>): List<Int> =
     foldLeft(reverse(xs), List.empty(), { y, x -> Cons(x + 1, y) })
+
+// 3.16
+fun doubleToString(xs: List<Double>): List<String> =
+    foldLeft(reverse(xs), List.empty(), { y, x -> Cons(x.toString(), y) })
