@@ -79,14 +79,14 @@ fun <A> lengthL(xs: List<A>): Int =
 
 // 3.11
 fun <A> reverse(xs: List<A>): List<A> =
-    foldLeft(xs, Nil, { y: List<A>, x: A -> Cons(x, y) })
+    foldLeft(xs, List.empty(), { y: List<A>, x: A -> Cons(x, y) })
 
 // 3.12
 fun <A, B> foldLeftR(xs: List<A>, z: B, f: (B, A) -> B): B =
-    foldRight(xs, z, { A, B -> f(B, A) })
+    foldRight(xs, z, { a, b -> f(b, a) })
 
 fun <A, B> foldRightL(xs: List<A>, z: B, f: (A, B) -> B): B =
-    foldLeft(xs, z, { B, A -> f(A, B) })
+    foldLeft(xs, z, { b, a -> f(a, b) })
 
 // 3.13
 fun <A> append(a1: List<A>, a2: List<A>): List<A> {
@@ -96,58 +96,61 @@ fun <A> append(a1: List<A>, a2: List<A>): List<A> {
 
 fun <A> appendL(a1: List<A>, a2: List<A>): List<A> {
     val leftF = { y: List<A>, x: A -> Cons(x, y) }
-    return foldLeft(foldLeft(a1, Nil, leftF), a2, leftF)
+    return foldLeft(reverse(a1), a2, leftF)
 }
 
 // 3.14
 fun <A> concat(lla: List<List<A>>): List<A> =
-    foldRight(lla, Nil, { x: List<A>, y: List<A> -> append(x, y) })
+    foldRight(lla, List.empty(), { x, y -> append(x, y) })
 
 fun <A> concat2(lla: List<List<A>>): List<A> =
-    foldLeft(lla, Nil, { y: List<A>, x: List<A> -> appendL(y, x) })
+    foldLeft(lla, List.empty(), { y, x -> appendL(y, x) })
 
 // 3.15
 fun increment(xs: List<Int>): List<Int> =
     foldLeft(reverse(xs), List.empty(), { y, x -> Cons(x + 1, y) })
 
+fun increment2(xs: List<Int>): List<Int> =
+    foldRight(xs, List.empty(), { x, y -> Cons(x + 1, y) })
+
 // 3.16
 fun doubleToString(xs: List<Double>): List<String> =
     foldLeft(reverse(xs), List.empty(), { y, x -> Cons(x.toString(), y) })
 
+fun doubleToString2(xs: List<Double>): List<String> =
+    foldRight(xs, List.empty(), { x, y -> Cons(x.toString(), y) })
+
 // 3.17
 fun <A, B> map(xs: List<A>, f: (A) -> B): List<B> =
-    foldLeft(
-        reverse(xs),
-        List.empty(),
-        { y, x -> Cons(f(x), y) }
-    )
+    foldLeft(reverse(xs), List.empty(), { y, x -> Cons(f(x), y) })
+
+fun <A, B> map2(xs: List<A>, f: (A) -> B): List<B> =
+    foldRight(xs, List.empty(), { x, y -> Cons(f(x), y) })
 
 // 3.18
 fun <A> filter(xs: List<A>, f: (A) -> Boolean): List<A> =
-    foldLeft(
-        reverse(xs),
-        Nil,
-        { y: List<A>, x: A -> if (f(x)) Cons(x, y) else filter(y, f) }
-    )
+    foldLeft(reverse(xs), List.empty(), { y, x -> if (f(x)) Cons(x, y) else filter(y, f) })
+
+fun <A> filter_2(xs: List<A>, f: (A) -> Boolean): List<A> =
+    foldRight(xs, List.empty(), { x, y -> if (f(x)) Cons(x, y) else filter(y, f) })
 
 // 3.19
 fun <A, B> flatMap(xa: List<A>, f: (A) -> List<B>): List<B> =
-    foldLeft(
-        reverse(xa),
-        List.empty(),
-        { y, x -> append(f(x), y) }
-    )
+    foldLeft(reverse(xa), List.empty(), { y, x -> append(f(x), y) })
+
+fun <A, B> flatMap2(xa: List<A>, f: (A) -> List<B>): List<B> =
+    foldRight(xa, List.empty(), { x, y -> append(f(x), y) })
 
 // 3.20
 fun <A> filter2(xa: List<A>, f: (A) -> Boolean): List<A> =
-    flatMap(xa, { x -> if (f(x)) List.of(x) else Nil })
+    flatMap(xa) { x -> if (f(x)) List.of(x) else List.empty() }
 
 // 3.21
 fun add(xa: List<Int>, xb: List<Int>): List<Int> =
     when (xa) {
-        is Nil -> Nil
+        is Nil -> List.empty()
         is Cons -> when (xb) {
-            is Nil -> Nil
+            is Nil -> List.empty()
             is Cons -> Cons(xa.head + xb.head, add(xa.tail, xb.tail))
         }
     }
@@ -155,9 +158,9 @@ fun add(xa: List<Int>, xb: List<Int>): List<Int> =
 // 3.22
 fun <A> zipWith(xa: List<A>, xb: List<A>, f: (A, A) -> A): List<A> =
     when (xa) {
-        is Nil -> Nil
+        is Nil -> List.empty()
         is Cons -> when (xb) {
-            is Nil -> Nil
+            is Nil -> List.empty()
             is Cons -> Cons(f(xa.head, xb.head), zipWith(xa.tail, xb.tail, f))
         }
     }
