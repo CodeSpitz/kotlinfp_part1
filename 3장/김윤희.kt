@@ -189,3 +189,10 @@ fun <A> size(tree: Tree<A>): Int =
         is Leaf -> 1
         is Branch -> 1 + size(tree.left) + size(tree.right)
     }
+
+// 3.25
+fun maximum(tree: Tree<Int>): Int =
+    when (tree) {
+        is Leaf -> tree.value
+        is Branch -> maxOf(maximum(tree.left), maximum(tree.right))
+    }
