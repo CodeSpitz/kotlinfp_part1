@@ -130,3 +130,10 @@ fun <A> filter(xs: List<A>, f: (A) -> Boolean): List<A> =
         { y: List<A>, x: A -> if (f(x)) Cons(x, y) else filter(y, f) }
     )
 
+// 3.19
+fun <A, B> flatMap(xa: List<A>, f: (A) -> List<B>): List<B> =
+    foldLeft(
+        reverse(xa),
+        List.empty(),
+        { y, x -> append(f(x), y) }
+    )
