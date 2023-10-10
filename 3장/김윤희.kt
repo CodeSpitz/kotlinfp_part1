@@ -113,3 +113,11 @@ fun increment(xs: List<Int>): List<Int> =
 // 3.16
 fun doubleToString(xs: List<Double>): List<String> =
     foldLeft(reverse(xs), List.empty(), { y, x -> Cons(x.toString(), y) })
+
+// 3.17
+fun <A, B> map(xs: List<A>, f: (A) -> B): List<B> =
+    foldLeft(
+        reverse(xs),
+        List.empty(),
+        { y, x -> Cons(f(x), y) }
+    )
