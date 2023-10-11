@@ -187,3 +187,153 @@ inline fun <ITEM:Any, OTHER:Any, RESULT:Any> FList<ITEM>.zipWith(other: FList<OT
         is Nil -> acc to other
     }
 }.first.reverse()
+//---------------------------------------------------------------------------------------------
+package fd
+
+import kore.fd.*
+import kore.fd.FList
+import org.junit.Test
+import kotlin.test.assertEquals
+
+class ListTest{
+    @Test
+    fun test1(){
+        val list = FList(1, 2, 3)
+        val nil = FList<Int>()
+        assertEquals(list.size, 3)
+        assertEquals(nil.size, 0)
+        assertEquals(list.toList(), listOf(1, 2, 3))
+        assertEquals(list.setHead(5).toString(), "Cons(head=5, tail=Cons(head=2, tail=Cons(head=3, tail=Nil)))")
+        assertEquals(nil.setHead(5).toString(), "Nil")
+        assertEquals(list.addFirst(4).toString(), "Cons(head=4, tail=Cons(head=1, tail=Cons(head=2, tail=Cons(head=3, tail=Nil))))")
+        assertEquals(nil.addFirst(4).toString(), "Nil")
+        assertEquals(list.fold(""){acc,it->acc + it}, "123")
+        assertEquals(list.fold1(""){acc,it->acc + it}, "123")
+        assertEquals(list.foldIndexed(""){index, acc,it->"$acc$index$it"}, "011223")
+        assertEquals(list.foldRight1("@") { it, acc -> acc + it }, "@321")
+        assertEquals(list.foldRight1(1.0) { it, acc -> acc * it }, 6.0)
+        assertEquals(list.foldRight2("@") { it, acc -> acc + it }, "@321")
+        assertEquals(list.foldRight2(1.0) { it, acc -> acc * it }, 6.0)
+        assertEquals(FList(1,2,0,3,4).foldRightWhile(0,{it != 0}) { it, acc -> acc + it }, 3)
+        assertEquals(list.foldRight("@") { it, acc -> acc + it }, "@321")
+        assertEquals(list.foldRight(1.0) { it, acc -> acc * it }, 6.0)
+        assertEquals(list.foldRight3("@") { it, acc -> acc + it }, "@321")
+        assertEquals(list.foldRight3(1.0) { it, acc -> acc * it }, 6.0)
+        assertEquals(list.foldRightIndexed(""){index, it, acc->"$acc$index$it"}, "031221")
+        assertEquals(list.reverse().toList(), listOf(3,2,1))
+        assertEquals(FList(1,2,3).reverse().reverse().toList(), listOf(1,2,3))
+        assertEquals(list.map{"${it*2}"}.fold(""){acc, it->"$acc$it"}, "246")
+        assertEquals(list.flatMap{ if(it != 2) FList(it) else FList() }.toList(), listOf(1,3))
+        assertEquals(FList(FList(1,2), FList(3,4)).flatten().toList(), listOf(1,2,3,4))
+        assertEquals(list.append1().toList(), listOf(1,2,3))
+        assertEquals(list.append1(FList(4, 5)).toList(), listOf(1,2,3,4,5))
+        assertEquals(list.append().toList(), listOf(1,2,3))
+        assertEquals(list.append(FList(4, 5)).toList(), listOf(1,2,3,4,5))
+        assertEquals((list + FList.Nil).toList(), listOf(1,2,3))
+        assertEquals((list + FList(4,5)).toList(), listOf(1,2,3,4,5))
+        assertEquals(list.copy().toList(), listOf(1,2,3))
+        assertEquals(list.drop(2).toString(), "Cons(head=3, tail=Nil)")
+        assertEquals(list.dropWhile { it < 2 }.toString(), "Cons(head=2, tail=Cons(head=3, tail=Nil))")
+        assertEquals(list.dropWhileIndexed { index, it -> index < 1 }.toString(), "Cons(head=2, tail=Cons(head=3, tail=Nil))")
+        assertEquals(list.dropLast().toList(), listOf(1,2))
+        assertEquals(list.dropLast(2).toList(), listOf(1))
+        assertEquals(list.dropLastWhile { it > 2 }.toList(), listOf(1,2))
+        assertEquals(nil.dropLast().toList(), listOf())
+        assertEquals(nil.dropLast(2).toList(), listOf())
+        assertEquals(nil.dropLastWhile { it > 2 }.toList(), listOf())
+        assertEquals(list.dropLastWhileIndexed { index, it ->index < 1}.toList(), listOf(1, 2))
+        assertEquals(list.filter{it != 2}.toList(), listOf(1,3))
+        assertEquals(FList(1, 2, 3, 4).filter{it % 2 == 0}.toList(), listOf(2,4))
+        assertEquals(FList(1, 2, 3, 4).filter1{it % 2 == 0}.toList(), listOf(2,4))
+        assertEquals(FList(1, 2, 3, 4).sliceFrom(3).toList(), listOf(3,4))
+        assertEquals(FList(1, 2, 3, 4).slice(1).toList(), listOf(2,3,4))
+        assertEquals(FList(1, 2, 3, 4).slice(1,2).toList(), listOf(2,3))
+        assertEquals(nil.sliceFrom(3).toList(), listOf())
+        assertEquals(nil.slice(1).toList(), listOf())
+        assertEquals(nil.slice(1,2).toList(), listOf())
+        assertEquals(list.startsWith(FList(2,3)), false)
+        assertEquals(list.startsWith(FList(1,2,3)), true)
+        assertEquals(list.startsWith(FList(1,3)), false)
+        assertEquals(FList(1,2,3).startsWith(FList(1,2)), true)
+        assertEquals(list.startsWith1(FList(2,3)), false)
+        assertEquals(list.startsWith1(FList(1,2,3)), true)
+        assertEquals(list.startsWith1(FList(1,3)), false)
+        assertEquals(FList(1,2,3).startsWith1(FList(1,2)), true)
+        assertEquals(list.startsWith(FList()), true)
+        assertEquals(nil.startsWith(FList()), true)
+        assertEquals(nil.startsWith(FList(1,2)), false)
+        assertEquals(FList(1,2) in list, true)
+        assertEquals(FList(2,3) in list, true)
+        assertEquals(FList(1,2,3) in list, true)
+        assertEquals(FList(1,3) in list, false)
+        assertEquals(FList() in list, false)
+        assertEquals(FList(1,3) in nil, false)
+        assertEquals(FList() in nil, true)
+        assertEquals(1 in list, true)
+        assertEquals(2 in list, true)
+        assertEquals(3 in list, true)
+        assertEquals(4 in list, false)
+        assertEquals(1 in nil, false)
+        assertEquals(FList(1, 2, 3).zipWith(FList(1,1,1)){ a, b->a + b}.toList(), listOf(2,3,4))
+        assertEquals(FList(1, 2).zipWith(FList(1,1,1)){ a, b->a + b}.toList(), listOf(2,3))
+        assertEquals(FList(1, 2, 3).zipWith(FList(1,1)){ a, b->a + b}.toList(), listOf(2,3))
+        assertEquals(FList(1.0,2.0,3.0).average().getOrElse { 0.0 }, 2.0)
+        listOf(1.0).average()
+
+    }
+
+}
+//--------------------------------------------------------------------------------------------
+package kore.fd
+
+import kore.fd.FTree.Branch
+import kore.fd.FTree.Leaf
+
+sealed class FTree<out ITEM:Any> {
+    companion object{
+        operator fun <ITEM:Any> invoke(left: FTree<ITEM>, right: FTree<ITEM>): FTree<ITEM> = Branch(left, right)
+        operator fun <ITEM:Any> invoke(value:ITEM): FTree<ITEM> = Leaf(value)
+    }
+    data class Leaf<ITEM:Any>@PublishedApi internal constructor(@PublishedApi internal val item:ITEM): FTree<ITEM>()
+    data class Branch<ITEM:Any>@PublishedApi internal constructor(@PublishedApi internal val left: FTree<ITEM>, @PublishedApi internal val right: FTree<ITEM>): FTree<ITEM>()
+
+}
+val <ITEM:Any> FTree<ITEM>.size:Int get() = fold({1}){ l, r->1 + l + r}
+val <ITEM:Any> FTree<ITEM>.depth:Int get() = fold({1}){ l, r->1 + if(l > r) l else r}
+val <ITEM> FTree<ITEM>.max:ITEM where ITEM:Comparable<ITEM>, ITEM:Number get() = fold({it}){ l, r->if(l > r) l else r}
+fun <ITEM:Any> FTree<ITEM>.setLeft(tree: FTree<ITEM>): FTree<ITEM> = when(this){
+    is Leaf -> Branch(tree, this)
+    is Branch -> Branch(tree, right)
+}
+fun <ITEM:Any> FTree<ITEM>.setRight(tree: FTree<ITEM>): FTree<ITEM> = when(this){
+    is Leaf -> Branch(this, tree)
+    is Branch -> Branch(left, tree)
+}
+fun <ITEM:Any, OTHER:Any> FTree<ITEM>.fold(leafBlock:(ITEM)->OTHER, branchBlock:(l:OTHER, r:OTHER)->OTHER):OTHER = when(this){
+    is Leaf -> leafBlock(item)
+    is Branch -> branchBlock(left.fold(leafBlock, branchBlock), right.fold(leafBlock, branchBlock))
+}
+fun <ITEM:Any, OTHER:Any> FTree<ITEM>.map(block:(ITEM)->OTHER): FTree<OTHER> = fold({FTree(block(it))}){ l, r->FTree(l, r)}
+operator fun <ITEM:Any> FTree<ITEM>.contains(item:ITEM):Boolean = fold({it == item}){ l, r-> l || r}
+//--------------------------------------------------------------------------------------------
+package fd
+
+import kore.fd.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+class TreeTest {
+    @Test
+    fun test1(){
+        val tree2 = FTree(FTree(FTree(1), FTree(FTree(3), FTree(4))), FTree(5))
+        assertEquals(tree2.depth, 4)
+        assertEquals(tree2.size, 7)
+        assertEquals(tree2.max, 5)
+        assertEquals("${tree2.map{it*2}}", "Branch(left=Branch(left=Leaf(item=2), right=Branch(left=Leaf(item=6), right=Leaf(item=8))), right=Leaf(item=10))")
+        assertEquals(1 in tree2, true)
+        assertEquals(3 in tree2, true)
+        assertEquals(4 in tree2, true)
+        assertEquals(5 in tree2, true)
+        assertEquals(2 in tree2, false)
+        assertEquals( 5 in tree2, true)
+    }
+}
