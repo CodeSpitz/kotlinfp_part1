@@ -149,6 +149,73 @@ data class Cons<out A>(val head: A, val tail: List<A>) : List<A>()
 
 sealed class Tree<out A> {
     companion object {
+        // 연습문제 3.24
+        fun <A> size(tr: Tree<A>): Int {
+            fun loop(tr: Tree<A>, acc: Int): Int =
+                when (tr) {
+                    is Leaf -> acc + 1
+                    is Branch -> loop(tr.left, acc) + loop(tr.right, acc) + 1
+                }
+            return loop(tr, 0)
+        }
+
+        // 연습문제 3.25
+        fun maximum(tr: Tree<Int>): Int {
+            fun loop(tr: Tree<Int>, mx: Int): Int =
+                when (tr) {
+                    is Leaf -> max(mx, tr.value)
+                    is Branch -> max(max(loop(tr.left, mx),loop(tr.right, mx)), 1)
+                }
+            return loop(tr, Int.MIN_VALUE)
+        }
+
+        // 연습문제 3.26
+        fun depth(tr: Tree<Int>): Int {
+            fun loop(tr: Tree<Int>, d: Int): Int =
+                when (tr) {
+                    is Leaf -> d + 1
+                    is Branch -> max(loop(tr.left, d + 1), loop(tr.right, d + 1))
+                }
+            return loop(tr, -1)
+        }
+
+        // 연습문제 3.27
+        fun <A, B> map(tr: Tree<A>, f: (A) -> B): Tree<B> {
+            fun loop(tr: Tree<A>): Tree<B> =
+                when (tr) {
+                    is Leaf -> Leaf(f(tr.value))
+                    is Branch -> Branch(loop(tr.left), loop(tr.right))
+                }
+            return loop(tr)
+        }
+
+        // 연습문제 3.28
+        fun <A, B> fold(ta: Tree<A>, l: (A) -> B, b: (B, B) -> B): B =
+            when (ta) {
+                is Leaf -> l(ta.value)
+                is Branch -> b(fold(ta.left, l, b), fold(ta.right, l, b))
+            }
+
+        fun <A> sizeF(ta: Tree<A>): Int = fold(
+            ta,
+            { 1 },
+            { a, b -> a + b + 1 }
+        )
+        fun maximumF(ta: Tree<Int>): Int = fold(
+            ta,
+            { it },
+            { a, b -> max(max(a, b), 1) }
+        )
+        fun <A> depthF(ta: Tree<A>): Int = fold(
+            ta,
+            { 0 },
+            { a, b -> max(a, b) + 1 }
+        )
+        fun <A, B> mapF(ta: Tree<A>, f: (A) -> B): Tree<B> = fold(
+            ta,
+            { Leaf(f(it)) },
+            { a: Tree<B>, b: Tree<B> -> Branch(a, b) }
+        )
     }
 }
 data class Leaf<A>(val value: A): Tree<A>()
@@ -233,4 +300,38 @@ fun main(args: Array<String>) {
     // 연습문제 3.18
     val practice3_18: List<Int> = List.of(1,2,3,4,5)
     Assert.assertEquals(List.filter(practice3_18, { it % 2 == 0 }), List.of(2, 4))
+
+    // 연습문제 3.24
+    val practice3_24_1: Tree<Int> = Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))
+    Assert.assertEquals(Tree.size(practice3_24_1), 5)
+    val practice3_24_2: Tree<Int> = Branch(Branch(Leaf(1), Leaf(2)), Branch(Leaf(3), Leaf(4)))
+    Assert.assertEquals(Tree.size(practice3_24_2), 7)
+
+    // 연습문제 3.25
+    val practice3_25: Tree<Int> = Branch(Branch(Leaf(7), Leaf(9)), Leaf(3))
+    Assert.assertEquals(Tree.maximum(practice3_25), 9)
+
+    // 연습문제 3.26
+    val practice3_26_1: Tree<Int> = Branch(Branch(Leaf(7), Leaf(9)), Leaf(3))
+    Assert.assertEquals(Tree.depth(practice3_26_1), 2)
+    val practice3_26_2: Tree<Int> = Branch(Branch(Leaf(1), Branch(Branch(Leaf(2), Leaf(3)), Leaf(4))), Leaf(5))
+    Assert.assertEquals(Tree.depth(practice3_26_2), 4)
+
+    // 연습문제 3.27
+    val practice3_27: Tree<Int> = Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))
+    Assert.assertEquals(Tree.map(practice3_27, { it * 2 }), Branch(Branch(Leaf(2), Leaf(4)), Leaf(6)))
+
+    // 연습문제 3.28
+    val practice3_28_size_1: Tree<Int> = Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))
+    Assert.assertEquals(Tree.sizeF(practice3_28_size_1), 5)
+    val practice3_28_size_2: Tree<Int> = Branch(Branch(Leaf(1), Leaf(2)), Branch(Leaf(3), Leaf(4)))
+    Assert.assertEquals(Tree.sizeF(practice3_28_size_2), 7)
+    val practice3_28_maximum: Tree<Int> = Branch(Branch(Leaf(7), Leaf(9)), Leaf(3))
+    Assert.assertEquals(Tree.maximumF(practice3_28_maximum), 9)
+    val practice3_28_depth_1: Tree<Int> = Branch(Branch(Leaf(7), Leaf(9)), Leaf(3))
+    Assert.assertEquals(Tree.depthF(practice3_28_depth_1), 2)
+    val practice3_28_depth_2: Tree<Int> = Branch(Branch(Leaf(1), Branch(Branch(Leaf(2), Leaf(3)), Leaf(4))), Leaf(5))
+    Assert.assertEquals(Tree.depthF(practice3_28_depth_2), 4)
+    val practice3_28_map: Tree<Int> = Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))
+    Assert.assertEquals(Tree.mapF(practice3_28_map, { it * 2 }), Branch(Branch(Leaf(2), Leaf(4)), Leaf(6)))
 }
