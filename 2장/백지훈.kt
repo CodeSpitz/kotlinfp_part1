@@ -10,7 +10,7 @@ fun fib(num: Int): Int {
 
 // 2-2 List<A> 타입을 술어 함수에 맞춰 적절히 정렬돼 있는지 검사.
 val <T> List<T>.tail: List<T>
-    get() = drop(1)
+    get() = drop(1)  // drop(n) : 앞에서 n개의 요소를 제외한 새로운 리스트를 반환, 리스트의 갯수가 작으면 빈 리스트 반환
 
 val <T> List<T>.head: T
     get() = first()
@@ -42,6 +42,8 @@ fun main() {
     println("--isSorted")
     println(isSorted(listOf(1, 2, 3)) { a, b -> a <= b })
     println(isSorted(listOf(1, 3, 2)) { a, b -> a <= b })
+    println(isSorted(listOf<Int>()) { a, b -> a <= b })
+    println(isSorted(listOf<Int>(3)) { a, b -> a <= b })
 
     println("--curry")
     println(curry { a: Double, b: Int -> "String - $a$b" }(11.23)(2))
