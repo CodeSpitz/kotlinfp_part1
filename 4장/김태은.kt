@@ -42,6 +42,7 @@ fun <A> Option<A>.filter(f: (A) -> Boolean): Option<A> =
     }
 
 // 4.2
+
 fun mean(list: List<Double>): Option<Double> =
     if (list.isEmpty()) Option.None
     else Option.of(list.sum() / list.size)
@@ -58,13 +59,23 @@ fun <A, B, C> map2(a: Option<A>, b: Option<B>, f: (A, B) -> C): Option<C> =
     }
 
 // 4.4
-//fun <A> sequence(list: List<Option<A>>): Option<List<A>> =
-//    if (list.any{ it.
+fun <A> sequence(list: List<Option<A>>): Option<List<A>> =
+    list.foldRight(Option.Some(Nil)) { oa1: Option<A>, oa2: Option<List<A>> ->
+        map2(oa1, oa2) { a1: A, a2: List<A> ->
+            Cons(a1, a2)
+        }
+    }
 
 // 4.5
-// 4.6
+fun <A, B> traverse(list: List<A>, f: (A) -> Option<B>): Option<List<B>> =
+    when (list) {
+        is Nil -> Option.Some(Nil)
+        is Cons -> map2(f(list.head), traverse(list.tail, f)) { b, xb ->
+            Cons(b, xb)
+        }
+    }
 
-// 4.7
+// 4.6
 sealed class Either<out E, out A> {
     data class Left<out E>(val error: E) : Either<E, Nothing>()
     data class Right<out A>(val value: A) : Either<Nothing, A>()
@@ -97,3 +108,18 @@ fun <E, A, B, C> map2(ae: Either<E, A>, be: Either<E, B>, f: (A, B) -> C): Eithe
     ae.flatMap { aValue ->
         be.map { f(aValue, it) }
     }
+
+// 4.7
+fun <E, A, B> traverse(list: List<A>, f: (A) -> Either<E, B>): Either<E, List<B>> =
+    when(list) {
+        is Nil -> Right(Nil)
+        is Cons -> map2(f(list.head), traverse(list.tail, f)) { b, xb ->
+            Cons(b, xb)
+        }
+    }
+
+fun <E, A> sequence(list: List<Either<E, A>>): Either<E, List<A>> =
+    traverse(list) { it }
+
+// 4.8
+Either의 E 부분 타입을 누적시킬 수 있도록 컬렉션 타입을 사용한다
