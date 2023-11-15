@@ -6,12 +6,15 @@ import study.fp.FTree.*
 sealed class FList<out A> {
     object Nil: FList<Nothing>()
     data class Cons<out A>(val head: A, val tail: FList<A>): FList<A>()
+    companion object {
+        fun<A> emptyList(): FList<A> = Nil
+    }
 }
 fun <A> of(vararg aa: A): FList<A> {
     val tail = aa.sliceArray(1 until aa.size)
     return if (aa.isEmpty()) Nil else Cons(aa[0], of(*tail))
 }
-//fun<A> empty(): FList<A> = Nil
+//fun<A> FList<A>.emptyList(): FList<A> = Nil
 fun<A, B> foldRight(xs: FList<A>, z: B, f: (A, B) -> B): B =
     when (xs) {
         is Nil -> z
@@ -114,33 +117,33 @@ fun <A> appendByFoldRight(list1: FList<A>, list2: FList<A>): FList<A> =
 
 /* 연습문제 3.14 */
 fun <A> concat(list: FList<FList<A>>): FList<A> =
-    foldRight(list, empty()) { list1: FList<A>, list2: FList<A> ->
+    foldRight(list, FList.emptyList()) { list1: FList<A>, list2: FList<A> ->
         foldRight(list1, list2) { a, b -> Cons(a, b) }
     }
 
 /* 연습문제 3.15 */
 fun addOne(list: FList<Int>): FList<Int> =
-    foldRight(list, empty()) { a, b ->  Cons(a + 1, b)}
+    foldRight(list, FList.emptyList()) { a, b ->  Cons(a + 1, b)}
 
 /* 연습문제 3.16 */
 fun convertToString(list: FList<Double>): FList<String> =
-    foldRight(list, empty()) { a, b -> Cons(a.toString(), b) }
+    foldRight(list, FList.emptyList()) { a, b -> Cons(a.toString(), b) }
 
 /* 연습문제 3.17 */
 fun <P1, RESULT> map(list: FList<P1>, f: (P1) -> RESULT): FList<RESULT> =
-    foldRight(list, empty()) { a, b -> Cons(f(a), b) }
+    foldRight(list, FList.emptyList()) { a, b -> Cons(f(a), b) }
 
 /* 연습문제 3.18 */
 fun <P1> filter(list: FList<P1>, f: (P1) -> Boolean): FList<P1> =
-    foldRight(list, empty()) { a: P1, b: FList<P1> -> if (f(a)) Cons(a, b) else b }
+    foldRight(list, FList.emptyList()) { a: P1, b: FList<P1> -> if (f(a)) Cons(a, b) else b }
 
 /* 연습문제 3.19 */
 fun <P1, RESULT> flatMap(list: FList<P1>, f: (P1) -> FList<RESULT>): FList<RESULT> =
-    foldRight(list, empty()) { a: P1, b: FList<RESULT> -> appendByFoldRight(f(a), b) }
+    foldRight(list, FList.emptyList()) { a: P1, b: FList<RESULT> -> appendByFoldRight(f(a), b) }
 
 /* 연습문제 3.20 */
 fun <P1> filterByFlatMap(list: FList<P1>, f: (P1) -> Boolean): FList<P1> =
-    flatMap(list) { a: P1 -> if (f(a)) of(a) else empty() }
+    flatMap(list) { a: P1 -> if (f(a)) of(a) else FList.emptyList() }
 
 /* 연습문제 3.21 */
 fun add(list1: FList<Int>, list2: FList<Int>): FList<Int> =
